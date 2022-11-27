@@ -19,10 +19,7 @@ struct RootView: View {
         List(viewStore.searchResult) { result in
           Text(result.name)
         }
-        .searchable(text: viewStore.binding(get: \.keyword, send: Root.Action.updateKeyword))
-        .onSubmit {
-          viewStore.send(.search)
-        }
+        .searchable(text: viewStore.binding(get: \.keyword, send: Root.Action.search))
       }
     }
   }

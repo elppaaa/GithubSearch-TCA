@@ -6,10 +6,13 @@
 //
 
 import Foundation
+import Combine
 
 import ComposableArchitecture
 
 struct Root: ReducerProtocol {
+  private let scheduler = DispatchQueue.global()
+  
   struct State: Equatable {
     var searchResult: [SearchResult] = []
     var totalCount = 0
@@ -18,23 +21,14 @@ struct Root: ReducerProtocol {
   }
   
   enum Action {
-    case search
     case updateSearchResult(TaskResult<[SearchResult]>)
-    case updateKeyword(String)
+    case search(String)
   }
+  
+  private enum SearchingID {}
   
   func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
     switch action {
-    case .search:
-      let _keyword = state.keyword
-      let _page = state.page
-      
-      return .task(priority: .high) {
-        await .updateSearchResult(
-          TaskResult {
-            try await API.search(keyword: _keyword, page: _page)
-          })
-      }
       
     case let .updateSearchResult(.success(result)):
       state.searchResult = result
@@ -46,12 +40,23 @@ struct Root: ReducerProtocol {
       
       // 키워드 변경 처리.
       // 변경시 page 변경 처리
-    case let .updateKeyword(keyword):
+    case let .search(keyword):
       if keyword != state.keyword { state.page = 1 }
       else { state.page += 1 }
-      
       state.keyword = keyword
-      return .none
+      
+      guard !keyword.isEmpty else {
+        state.searchResult = []
+        return .cancel(id: SearchingID.self)
+      }
+      
+      let _keyword = keyword
+      let _page = state.page
+      
+      return .task {
+        await .updateSearchResult(TaskResult { try await API.search(keyword: _keyword, page: _page)})
+      }
+      .debounce(id: SearchingID.self, for: .milliseconds(500), scheduler: scheduler)
     }
   }
 }

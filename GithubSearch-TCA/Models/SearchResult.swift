@@ -38,15 +38,17 @@ final class API {
   }()
   
   static func search(keyword: String, page: Int = 0) async throws -> [SearchResult] {
-    let request = createURLRequest(keyword: keyword, page: page)
+    guard let request = createURLRequest(keyword: keyword, page: page) else { return [] }
     let result = try await URLSession.shared.data(for: request)
     let data = try decodeSerachResult(from: result.0)
     
     return data
   }
 
-  private static func createURLRequest(keyword: String, page: Int) -> URLRequest {
-    let url = URL(string: "https://api.github.com/search/repositories?q=\(keyword)&per_page=\(per_page)&page=\(page)")!
+  private static func createURLRequest(keyword: String, page: Int) -> URLRequest? {
+    guard let url = URL(string: "https://api.github.com/search/repositories?q=\(keyword)&per_page=\(per_page)&page=\(page)") else {
+      return nil
+    }
     var request = URLRequest(url: url)
     
     request.addValue("application/vnd.github.text-match+json", forHTTPHeaderField: "Accept")
