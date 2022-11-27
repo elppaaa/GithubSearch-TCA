@@ -14,13 +14,15 @@ struct RootView: View {
   
   var body: some View {
     WithViewStore(store, observe: { $0 }) { viewStore in
-      // TODO:  View / Cell 개선
-      List(viewStore.searchResult) { result in
-        Text(result.name)
-      }
-      .searchable(text: viewStore.binding(get: \.keyword, send: Root.Action.updateKeyword))
-      .onSubmit {
-        viewStore.send(.search)
+      NavigationView {
+        // TODO:  View / Cell 개선
+        List(viewStore.searchResult) { result in
+          Text(result.name)
+        }
+        .searchable(text: viewStore.binding(get: \.keyword, send: Root.Action.updateKeyword))
+        .onSubmit {
+          viewStore.send(.search)
+        }
       }
     }
   }
