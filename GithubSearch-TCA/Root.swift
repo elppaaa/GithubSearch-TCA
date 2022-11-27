@@ -20,7 +20,7 @@ struct Root: ReducerProtocol {
   }
   
   enum Action {
-    case updateSearchResult(TaskResult<[SearchResult]>)
+    case updateSearchResult(TaskResult<GithubSearchResultDTO>)
     case search(String)
     case viewAppeared(Int) // id
   }
@@ -42,11 +42,16 @@ struct Root: ReducerProtocol {
       
     case let .updateSearchResult(.success(result)):
       defer { state.isLoading = false }
+      guard !result.apiExceeded else { return .none }
+      if result.totalCount > 0 { state.totalCount = result.totalCount }
+      if state.searchResult.count >= state.totalCount {
+        state.page = -1
+      }
       
       if state.page == 1 {
-        state.searchResult = result
+        state.searchResult = result.items
       } else {
-        state.searchResult.append(contentsOf: result)
+        state.searchResult.append(contentsOf: result.items)
       }
       return .none
       
@@ -59,21 +64,25 @@ struct Root: ReducerProtocol {
       // 키워드 변경 처리.
       // 변경시 page 변경 처리
     case let .search(keyword):
-      if state.keyword == keyword && state.page == -1 { return .none }
       if keyword != state.keyword {
-        state.page = 1
+        state.keyword = keyword
         state.isLoading = false
-        state.searchResult = []
+        self.resetSearch(state: &state)
+        return .concatenate(
+          .cancel(id: SearchingID.self),
+          .task { .search(keyword) })
       } else {
+        if state.page == -1  {
+          return .none
+        }
         state.page += 1
       }
-      state.keyword = keyword
       
       guard !state.isLoading else { return .none }
       state.isLoading = true
       
       guard !keyword.isEmpty else {
-        state.searchResult = []
+        self.resetSearch(state: &state)
         return .cancel(id: SearchingID.self)
       }
       
@@ -85,5 +94,11 @@ struct Root: ReducerProtocol {
       }
       .debounce(id: SearchingID.self, for: .milliseconds(300), scheduler: DispatchQueue.main)
     }
+  }
+  
+  private func resetSearch(state: inout State) {
+    state.totalCount = 0
+    state.searchResult = []
+    state.page = 0
   }
 }

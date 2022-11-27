@@ -15,8 +15,30 @@ curl -H 'Accept: application/vnd.github.text-match+json' \
 
 
 struct GithubSearchResultDTO: Decodable {
-//  let totalCount: Int
+  let message: String?
+  let totalCount: Int
   let items: [SearchResult]
+  
+  var apiExceeded: Bool {
+    message?.contains("API rate limit") ?? false
+  }
+}
+
+extension GithubSearchResultDTO {
+  enum CodingKeys: CodingKey {
+    case message
+    case totalCount
+    case items
+  }
+  
+  init(from decoder: Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    // error message
+    self.message = try container.decodeIfPresent(String.self, forKey: .message)
+    
+    self.totalCount = try container.decodeIfPresent(Int.self, forKey: .totalCount) ?? -1
+    self.items = try container.decodeIfPresent([SearchResult].self, forKey: .items) ?? []
+  }
 }
 
 
@@ -37,12 +59,15 @@ final class API {
     return decoder
   }()
   
-  static func search(keyword: String, page: Int = 0) async throws -> [SearchResult] {
-    guard let request = createURLRequest(keyword: keyword, page: page) else { return [] }
+  static func search(keyword: String, page: Int = 0) async throws -> GithubSearchResultDTO {
+    guard let request = createURLRequest(keyword: keyword, page: page) else {
+      throw NSError(domain: "Failed to create URL", code: -1)
+    }
+    debugPrint("🦄 Request: \(keyword), \(page)")
     let result = try await URLSession.shared.data(for: request)
-    let data = try decodeSerachResult(from: result.0)
+    let searchResult = try decoder.decode(GithubSearchResultDTO.self, from: result.0)
     
-    return data
+    return searchResult
   }
 
   private static func createURLRequest(keyword: String, page: Int) -> URLRequest? {
@@ -54,9 +79,5 @@ final class API {
     request.addValue("application/vnd.github.text-match+json", forHTTPHeaderField: "Accept")
     
     return request
-  }
-  
-  private static func decodeSerachResult(from data: Data) throws -> [SearchResult] {
-    try decoder.decode(GithubSearchResultDTO.self, from: data).items
   }
 }
