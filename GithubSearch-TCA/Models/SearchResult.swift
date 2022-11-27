@@ -15,7 +15,7 @@ curl -H 'Accept: application/vnd.github.text-match+json' \
 
 
 struct GithubSearchResultDTO: Decodable {
-  let totalCount: Int
+//  let totalCount: Int
   let items: [SearchResult]
 }
 

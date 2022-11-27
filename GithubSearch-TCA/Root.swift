@@ -11,8 +11,6 @@ import Combine
 import ComposableArchitecture
 
 struct Root: ReducerProtocol {
-  private let scheduler = DispatchQueue.global()
-  
   struct State: Equatable {
     var searchResult: [SearchResult] = []
     var totalCount = 0
@@ -56,7 +54,7 @@ struct Root: ReducerProtocol {
       return .task {
         await .updateSearchResult(TaskResult { try await API.search(keyword: _keyword, page: _page)})
       }
-      .debounce(id: SearchingID.self, for: .milliseconds(500), scheduler: scheduler)
+      .debounce(id: SearchingID.self, for: .milliseconds(500), scheduler: DispatchQueue.main)
     }
   }
 }
