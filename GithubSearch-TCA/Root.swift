@@ -64,18 +64,13 @@ struct Root: ReducerProtocol {
       // 키워드 변경 처리.
       // 변경시 page 변경 처리
     case let .search(keyword):
+      let isNewSearch = keyword != state.keyword
       if keyword != state.keyword {
         state.keyword = keyword
         state.isLoading = false
         self.resetSearch(state: &state)
-        return .concatenate(
-          .cancel(id: SearchingID.self),
-          .task { .search(keyword) })
-      } else {
-        if state.page == -1  {
-          return .none
-        }
-        state.page += 1
+      } else if state.page == -1 {
+        return .none
       }
       
       guard !state.isLoading else { return .none }
@@ -86,13 +81,18 @@ struct Root: ReducerProtocol {
         return .cancel(id: SearchingID.self)
       }
       
+      state.page += 1
       let _keyword = keyword
       let _page = state.page
       
-      return .task {
+      let search = EffectTask<Action>.task {
         await .updateSearchResult(TaskResult { try await API.search(keyword: _keyword, page: _page) })
       }
-      .debounce(id: SearchingID.self, for: .milliseconds(300), scheduler: DispatchQueue.main)
+        .debounce(id: SearchingID.self, for: .milliseconds(500), scheduler: DispatchQueue.main)
+      
+      return isNewSearch ?
+        .concatenate(.cancel(id: SearchingID.self), search) :
+      search
     }
   }
   

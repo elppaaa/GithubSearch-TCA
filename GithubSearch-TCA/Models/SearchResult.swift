@@ -63,7 +63,6 @@ final class API {
     guard let request = createURLRequest(keyword: keyword, page: page) else {
       throw NSError(domain: "Failed to create URL", code: -1)
     }
-    debugPrint("🦄 Request: \(keyword), \(page)")
     let result = try await URLSession.shared.data(for: request)
     let searchResult = try decoder.decode(GithubSearchResultDTO.self, from: result.0)
     
