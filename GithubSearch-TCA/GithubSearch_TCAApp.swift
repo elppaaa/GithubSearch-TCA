@@ -7,11 +7,13 @@
 
 import SwiftUI
 
+import ComposableArchitecture
+
 @main
 struct GithubSearch_TCAApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+          RootView(store: Store(initialState: Root.State(), reducer: Root()._printChanges()))
         }
     }
 }
