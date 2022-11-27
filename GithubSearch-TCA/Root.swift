@@ -12,6 +12,7 @@ import ComposableArchitecture
 struct Root: ReducerProtocol {
   struct State: Equatable {
     var searchResult: [SearchResult] = []
+    var totalCount = 0
     var page = 0
     var keyword = ""
   }
@@ -46,7 +47,7 @@ struct Root: ReducerProtocol {
       // 키워드 변경 처리.
       // 변경시 page 변경 처리
     case let .updateKeyword(keyword):
-      if keyword != state.keyword { state.page = 0 }
+      if keyword != state.keyword { state.page = 1 }
       else { state.page += 1 }
       
       state.keyword = keyword
