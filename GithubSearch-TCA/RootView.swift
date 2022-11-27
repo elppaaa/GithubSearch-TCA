@@ -18,6 +18,9 @@ struct RootView: View {
         // TODO:  View / Cell 개선
         List(viewStore.searchResult) { result in
           Text(result.name)
+            .onAppear {
+              viewStore.send(.viewAppeared(result.id))
+            }
         }
         .searchable(text: viewStore.binding(get: \.keyword, send: Root.Action.search))
       }
