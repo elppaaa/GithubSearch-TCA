@@ -14,6 +14,7 @@
 		4878F6A22933331C009828AB /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4878F6A12933331C009828AB /* RootView.swift */; };
 		4878F6A42933339C009828AB /* Root.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4878F6A32933339C009828AB /* Root.swift */; };
 		4878F6A7293335B7009828AB /* SearchResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4878F6A6293335B7009828AB /* SearchResult.swift */; };
+		4878F6AA29339BF1009828AB /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = 4878F6A929339BF1009828AB /* OrderedCollections */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +32,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4878F6AA29339BF1009828AB /* OrderedCollections in Frameworks */,
 				4878F6A029333314009828AB /* ComposableArchitecture in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -101,6 +103,7 @@
 			name = "GithubSearch-TCA";
 			packageProductDependencies = (
 				4878F69F29333314009828AB /* ComposableArchitecture */,
+				4878F6A929339BF1009828AB /* OrderedCollections */,
 			);
 			productName = "GithubSearch-TCA";
 			productReference = 4878F68D2933323F009828AB /* GithubSearch-TCA.app */;
@@ -132,6 +135,7 @@
 			mainGroup = 4878F6842933323F009828AB;
 			packageReferences = (
 				4878F69E29333314009828AB /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
+				4878F6A829339BF1009828AB /* XCRemoteSwiftPackageReference "swift-collections" */,
 			);
 			productRefGroup = 4878F68E2933323F009828AB /* Products */;
 			projectDirPath = "";
@@ -291,7 +295,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"GithubSearch-TCA/Preview Content\"";
-				DEVELOPMENT_TEAM = 78X32W2D44;
+				DEVELOPMENT_TEAM = R84QKMAYD5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -320,7 +324,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"GithubSearch-TCA/Preview Content\"";
-				DEVELOPMENT_TEAM = 78X32W2D44;
+				DEVELOPMENT_TEAM = R84QKMAYD5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -373,6 +377,14 @@
 				version = 0.47.1;
 			};
 		};
+		4878F6A829339BF1009828AB /* XCRemoteSwiftPackageReference "swift-collections" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-collections.git";
+			requirement = {
+				kind = exactVersion;
+				version = 1.0.3;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -380,6 +392,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4878F69E29333314009828AB /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
 			productName = ComposableArchitecture;
+		};
+		4878F6A929339BF1009828AB /* OrderedCollections */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4878F6A829339BF1009828AB /* XCRemoteSwiftPackageReference "swift-collections" */;
+			productName = OrderedCollections;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

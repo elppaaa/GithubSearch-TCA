@@ -8,11 +8,12 @@
 import Foundation
 import Combine
 
+import OrderedCollections
 import ComposableArchitecture
 
 struct Root: ReducerProtocol {
   struct State: Equatable {
-    var searchResult: [SearchResult] = []
+    var searchResult: OrderedSet<SearchResult> = []
     var totalCount = 0
     var page = 0
     var keyword = ""
@@ -49,7 +50,7 @@ struct Root: ReducerProtocol {
       }
       
       if state.page == 1 {
-        state.searchResult = result.items
+        state.searchResult = OrderedSet(result.items)
       } else {
         state.searchResult.append(contentsOf: result.items)
       }

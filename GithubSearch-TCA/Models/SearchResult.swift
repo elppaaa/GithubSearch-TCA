@@ -47,7 +47,7 @@ struct SearchResult: Decodable {
   let name: String
 }
 
-extension SearchResult: Identifiable, Equatable { }
+extension SearchResult: Identifiable, Equatable, Hashable { }
 
 final class API {
   private init() { }
